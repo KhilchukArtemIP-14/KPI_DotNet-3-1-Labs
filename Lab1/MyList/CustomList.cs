@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 namespace MyList
 {
-    public class CustomList<T> : ICollection<T>
+    public class CustomList<T> : IList<T>
     {
         private ListNode<T> _start;
         private ListNode<T> _end;
@@ -58,7 +58,15 @@ namespace MyList
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            throw new NotImplementedException();
+            if (array is null) throw new Exception("Array is null");
+            if (array.Length - arrayIndex < Count) throw new Exception("Array doesn't have enough space");
+
+            int i = 0;
+            foreach (var a in this)
+            {
+                array[arrayIndex + i] = a;
+                i++;
+            }
         }
 
         public IEnumerator<T> GetEnumerator()
@@ -103,7 +111,7 @@ namespace MyList
             if (_end.Value.Equals(item))
             {
                 _end = prvs;
-
+                _end.Next = null;
                 _count--;
                 _version++;
 
@@ -148,28 +156,99 @@ namespace MyList
             return GetEnumerator();
         }
 
+        public int IndexOf(T item)
+        {
+            int i = 0;
+            foreach (var a in this)
+            {
+                if (a.Equals(item)) return i;
+                i++;
+            }
+            return -1;
+        }
+
+        public void Insert(int index, T item)
+        {
+            if (_start is null || (index == _count)) Add(item);
+            if (index == 0)
+            {
+                var tmp = new ListNode<T>(item);
+                tmp.Next = _start;
+                _start = tmp;
+                _count++;
+                _version++;
+                return;
+            }
+            var prvs = _start;
+            var curr = prvs.Next;
+            for (int i = 1; i < _count; i++)
+            {
+                if (i == index)
+                {
+                    var tmp = new ListNode<T>(item);
+                    tmp.Next = curr;
+                    prvs.Next = tmp;
+                    _count++;
+                    _version++;
+                    return;
+                }
+                prvs = curr;
+                curr = curr.Next;
+            }
+        }
+
+        public void RemoveAt(int index)
+        {
+            if (index >= Count || index < 0) throw new ArgumentOutOfRangeException("Argument was out of range");
+            if (_start is null) return;
+
+            _count--;
+            _version++;
+
+            if (index == 0)
+            {
+                _start = _start.Next;
+                return;
+            }
+
+            var prvs = _start;
+            var curr = prvs.Next;
+            for (int i = 1; i < _count - 1; i++)
+            {
+                if (i == index)
+                {
+                    prvs.Next = curr.Next;
+                    return;
+                }
+                prvs = curr;
+                curr = curr.Next;
+            }
+            if (index == _count - 1)
+            {
+                _end = prvs;
+                _end.Next = null;
+            }
+        }
+
         internal class MyEnumerator : IEnumerator<T>
         {
+            private readonly CustomList<T> _myCollection;
+            private readonly int _versionSnapshot;
+
             private T _current { get; set; }
             public T Current => _current;
-            private readonly CustomList<T> _myCollection;
-            private int _indexer;
-            private int _versionSnapshot;
             object IEnumerator.Current => _current;
+
+            private int _indexer;
 
             public MyEnumerator(CustomList<T> myCollection)
             {
-                _myCollection = myCollection;
+                _myCollection = myCollection ?? throw new ArgumentNullException("The collection is null");
+
                 _indexer = 0;
                 _versionSnapshot = myCollection._version;
-                if (_myCollection?.Count > 0)
-                {
-                    _current = _myCollection[_indexer];
-                }
-                else
-                {
-                    _current = _myCollection == null ? throw new Exception("The collection is null") : default(T);
-                }
+
+                _current = _myCollection.Count > 0 ? _myCollection[_indexer] : default(T);
             }
 
             public void Dispose()
@@ -180,7 +259,7 @@ namespace MyList
             {
                 if (_versionSnapshot != _myCollection._version) throw new Exception("The collection has been modified");
 
-                if (_indexer >= _myCollection?.Count)
+                if (_indexer >= _myCollection.Count)
                 {
                     Reset();
                     return false;
@@ -193,14 +272,7 @@ namespace MyList
             public void Reset()
             {
                 _indexer = 0;
-                if (_myCollection?.Count > 0)
-                {
-                    _current = _myCollection[_indexer];
-                }
-                else
-                {
-                    _current = _myCollection == null ? throw new Exception("The collection is null") : default(T);
-                }
+                _current = _myCollection?.Count > 0 ? _myCollection[_indexer] : default(T);
             }
         }
 
@@ -208,7 +280,6 @@ namespace MyList
         {
             public T Value { get; set; }
             public ListNode<T> Next { get; set; } = null;
-            //public ListNode<T> Previous { get; set; } = null;
             internal ListNode(T value)
             {
                 Value = value;
