@@ -7,8 +7,18 @@ namespace MyList
     {
         private ListNode<T> _start;
         private ListNode<T> _end;
-        private int _count;
         private int _version;
+        private int _count;
+        public int Count => _count;
+        public bool IsReadOnly => false;
+
+        public event EventHandler<T> ItemAdded;
+        public event EventHandler<T> ItemInserted;
+        public event EventHandler<T> ItemRemoved;
+        public event EventHandler<int> ItemSet;
+        public event EventHandler Cleared;
+
+
         public CustomList()
         {
             _count = 0;
@@ -16,12 +26,7 @@ namespace MyList
             _end = null;
             _version = 0;
         }
-
-        public int Count => _count;
-
-        public bool IsReadOnly => false;
-
-        public void Add(T item)
+        private void AppendItem(T item)
         {
             if (_end is null)
             {
@@ -33,7 +38,12 @@ namespace MyList
                 _end.Next = new ListNode<T>(item);
                 _end = _end.Next;
             }
+        }
+        public void Add(T item)
+        {
+            AppendItem(item);
 
+            ItemAdded?.Invoke(this, item);
             _count++;
             _version++;
         }
@@ -44,11 +54,11 @@ namespace MyList
             _start = null;
             _count = 0;
             _version++;
+            Cleared?.Invoke(this, EventArgs.Empty);
         }
 
         public bool Contains(T item)
         {
-
             foreach (var a in this)
             {
                 if (a.Equals(item)) return true;
@@ -76,45 +86,44 @@ namespace MyList
 
         public bool Remove(T item)
         {
-            var tmp = _start;
-            if (tmp is null) return false;
+            if (Count == 0) return false;
 
-            if (tmp.Value.Equals(item))
+            if (_start.Value.Equals(item))
             {
-                _start = tmp.Next;
+                _start = _start.Next;
 
                 _count--;
                 _version++;
-
+                ItemRemoved?.Invoke(this, item);
                 return true;
             }
-            var prvs = tmp;
 
-            tmp = tmp.Next;
-
-            while (tmp != _end)
+            var prvs = _start;
+            var curr = _start.Next;
+            while (curr != _end)
             {
-                if (tmp.Value.Equals(item))
+                if (curr.Value.Equals(item))
                 {
-                    prvs.Next = tmp.Next;
+                    prvs.Next = curr.Next;
 
                     _count--;
                     _version++;
-
+                    ItemRemoved?.Invoke(this, item);
                     return true;
                 }
 
-                prvs = tmp;
-                tmp = tmp.Next;
+                prvs = curr;
+                curr = curr.Next;
             }
 
             if (_end.Value.Equals(item))
             {
                 _end = prvs;
                 _end.Next = null;
+
                 _count--;
                 _version++;
-
+                ItemRemoved?.Invoke(this, item);
                 return true;
             }
 
@@ -146,6 +155,7 @@ namespace MyList
                     }
                     tmp.Value = value;
                     _version++;
+                    ItemSet?.Invoke(this, index);
                 }
                 else { throw new IndexOutOfRangeException("Index was out of range"); }
             }
@@ -169,14 +179,28 @@ namespace MyList
 
         public void Insert(int index, T item)
         {
-            if (_start is null || (index == _count)) Add(item);
+            if (index < 0 || index > _count) throw new ArgumentOutOfRangeException("Index out of range");
+
+            if (Count == 0 || index == _count)
+            {
+                AppendItem(item);
+
+                ItemInserted?.Invoke(this, item);
+                _count++;
+                _version++;
+                return;
+            }
+
+            _count++;
+            _version++;
+
             if (index == 0)
             {
                 var tmp = new ListNode<T>(item);
                 tmp.Next = _start;
                 _start = tmp;
-                _count++;
-                _version++;
+                ItemInserted?.Invoke(this, item);
+
                 return;
             }
             var prvs = _start;
@@ -188,8 +212,8 @@ namespace MyList
                     var tmp = new ListNode<T>(item);
                     tmp.Next = curr;
                     prvs.Next = tmp;
-                    _count++;
-                    _version++;
+                    ItemInserted?.Invoke(this, item);
+
                     return;
                 }
                 prvs = curr;
@@ -200,14 +224,15 @@ namespace MyList
         public void RemoveAt(int index)
         {
             if (index >= Count || index < 0) throw new ArgumentOutOfRangeException("Argument was out of range");
-            if (_start is null) return;
 
             _count--;
             _version++;
 
             if (index == 0)
             {
+                var tmp = _start.Value;
                 _start = _start.Next;
+                ItemRemoved?.Invoke(this, tmp);
                 return;
             }
 
@@ -217,7 +242,9 @@ namespace MyList
             {
                 if (i == index)
                 {
+                    var tmp = curr.Value;
                     prvs.Next = curr.Next;
+                    ItemRemoved?.Invoke(this, tmp);
                     return;
                 }
                 prvs = curr;
@@ -225,8 +252,12 @@ namespace MyList
             }
             if (index == _count - 1)
             {
+                var tmp = _end.Value;
+
                 _end = prvs;
                 _end.Next = null;
+                ItemRemoved?.Invoke(this, tmp);
+
             }
         }
 
@@ -280,7 +311,7 @@ namespace MyList
         {
             public T Value { get; set; }
             public ListNode<T> Next { get; set; } = null;
-            internal ListNode(T value)
+            public ListNode(T value)
             {
                 Value = value;
             }
