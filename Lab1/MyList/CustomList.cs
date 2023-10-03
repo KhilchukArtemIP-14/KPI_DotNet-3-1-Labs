@@ -26,28 +26,7 @@ namespace MyList
             _end = null;
             _version = 0;
         }
-        private void AppendItem(T item)
-        {
-            if (_end is null)
-            {
-                _start = new ListNode<T>(item);
-                _end = _start;
-            }
-            else
-            {
-                _end.Next = new ListNode<T>(item);
-                _end = _end.Next;
-            }
-        }
-        public void Add(T item)
-        {
-            AppendItem(item);
-
-            ItemAdded?.Invoke(this, item);
-            _count++;
-            _version++;
-        }
-
+        
         public void Clear()
         {
             _end = null;
@@ -56,7 +35,17 @@ namespace MyList
             _version++;
             Cleared?.Invoke(this, EventArgs.Empty);
         }
-
+       
+        public int IndexOf(T item)
+        {
+            int i = 0;
+            foreach (var a in this)
+            {
+                if (a.Equals(item)) return i;
+                i++;
+            }
+            return -1;
+        }
         public bool Contains(T item)
         {
             foreach (var a in this)
@@ -78,10 +67,54 @@ namespace MyList
                 i++;
             }
         }
-
-        public IEnumerator<T> GetEnumerator()
+        public void Add(T item)
         {
-            return new MyEnumerator(this);
+            AppendItem(item);
+
+            ItemAdded?.Invoke(this, item);
+        }
+
+        public void Insert(int index, T item)
+        {
+            if (index < 0 || index > _count) throw new ArgumentOutOfRangeException("Index out of range");
+
+            if (Count == 0 || index == _count)
+            {
+                AppendItem(item);
+
+                ItemInserted?.Invoke(this, item);
+                return;
+            }
+
+            _count++;
+            _version++;
+
+            if (index == 0)
+            {
+                var tmp = new ListNode<T>(item);
+                tmp.Next = _start;
+                _start = tmp;
+                ItemInserted?.Invoke(this, item);
+
+                return;
+            }
+            var prvs = _start;
+            var curr = prvs.Next;
+            for (int i = 1; i < _count - 1; i++)
+            {
+                if (i == index)
+                {
+                    var tmp = new ListNode<T>(item);
+                    tmp.Next = curr;
+                    prvs.Next = tmp;
+                    ItemInserted?.Invoke(this, item);
+
+                    return;
+                }
+                prvs = curr;
+                curr = curr.Next;
+            }
+
         }
 
         public bool Remove(T item)
@@ -129,6 +162,47 @@ namespace MyList
 
             return false;
         }
+
+        public void RemoveAt(int index)
+        {
+            if (index >= Count || index < 0) throw new ArgumentOutOfRangeException("Argument was out of range");
+
+            _count--;
+            _version++;
+
+            if (index == 0)
+            {
+                var tmp = _start.Value;
+                _start = _start.Next;
+                ItemRemoved?.Invoke(this, tmp);
+                return;
+            }
+
+            var prvs = _start;
+            var curr = prvs.Next;
+            for (int i = 1; i < _count; i++)
+            {
+                if (i == index)
+                {
+                    var tmp = curr.Value;
+                    prvs.Next = curr.Next;
+                    ItemRemoved?.Invoke(this, tmp);
+                    return;
+                }
+                prvs = curr;
+                curr = curr.Next;
+            }
+            if (index == _count)
+            {
+                var tmp = _end.Value;
+
+                _end = prvs;
+                _end.Next = null;
+                ItemRemoved?.Invoke(this, tmp);
+
+            }
+        }
+
         public T this[int index]
         {
             get
@@ -161,104 +235,28 @@ namespace MyList
             }
         }
 
+        private void AppendItem(T item)
+        {
+            if (_end is null)
+            {
+                _start = new ListNode<T>(item);
+                _end = _start;
+            }
+            else
+            {
+                _end.Next = new ListNode<T>(item);
+                _end = _end.Next;
+            }
+            _count++;
+            _version++;
+        }
+        public IEnumerator<T> GetEnumerator()
+        {
+            return new MyEnumerator(this);
+        }
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-
-        public int IndexOf(T item)
-        {
-            int i = 0;
-            foreach (var a in this)
-            {
-                if (a.Equals(item)) return i;
-                i++;
-            }
-            return -1;
-        }
-
-        public void Insert(int index, T item)
-        {
-            if (index < 0 || index > _count) throw new ArgumentOutOfRangeException("Index out of range");
-
-            if (Count == 0 || index == _count)
-            {
-                AppendItem(item);
-
-                ItemInserted?.Invoke(this, item);
-                _count++;
-                _version++;
-                return;
-            }
-
-            _count++;
-            _version++;
-
-            if (index == 0)
-            {
-                var tmp = new ListNode<T>(item);
-                tmp.Next = _start;
-                _start = tmp;
-                ItemInserted?.Invoke(this, item);
-
-                return;
-            }
-            var prvs = _start;
-            var curr = prvs.Next;
-            for (int i = 1; i < _count; i++)
-            {
-                if (i == index)
-                {
-                    var tmp = new ListNode<T>(item);
-                    tmp.Next = curr;
-                    prvs.Next = tmp;
-                    ItemInserted?.Invoke(this, item);
-
-                    return;
-                }
-                prvs = curr;
-                curr = curr.Next;
-            }
-        }
-
-        public void RemoveAt(int index)
-        {
-            if (index >= Count || index < 0) throw new ArgumentOutOfRangeException("Argument was out of range");
-
-            _count--;
-            _version++;
-
-            if (index == 0)
-            {
-                var tmp = _start.Value;
-                _start = _start.Next;
-                ItemRemoved?.Invoke(this, tmp);
-                return;
-            }
-
-            var prvs = _start;
-            var curr = prvs.Next;
-            for (int i = 1; i < _count - 1; i++)
-            {
-                if (i == index)
-                {
-                    var tmp = curr.Value;
-                    prvs.Next = curr.Next;
-                    ItemRemoved?.Invoke(this, tmp);
-                    return;
-                }
-                prvs = curr;
-                curr = curr.Next;
-            }
-            if (index == _count - 1)
-            {
-                var tmp = _end.Value;
-
-                _end = prvs;
-                _end.Next = null;
-                ItemRemoved?.Invoke(this, tmp);
-
-            }
         }
 
         internal class MyEnumerator : IEnumerator<T>
