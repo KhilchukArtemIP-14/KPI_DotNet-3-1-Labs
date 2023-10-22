@@ -9,8 +9,13 @@ namespace CollectionTest
     {
         static void Main(string[] args)
         {
+            
             var coll = new CustomList<int>() { 1, 2, 3 };
-
+            EventHandler<int> onAdded = (sender, item) =>
+            {
+                Console.WriteLine("Added new item, {0}", item.ToString());
+            };
+            coll.ItemAdded += onAdded;
             Console.WriteLine("Initial state of list:");
             foreach (var a in coll)
             {
@@ -68,6 +73,8 @@ namespace CollectionTest
 
             coll.Clear();
             Console.WriteLine("Elements amount in list after Clear(): {0}",coll.Count);
+
+            
         }
     }
 }
