@@ -35,6 +35,7 @@ namespace MyList.Tests
             Assert.True(wasInvoked);
             Assert.Equal(6,addedItem);
         }
+
         [Theory]
         [InlineData(0,0)]
         [InlineData(2,3)]
@@ -52,6 +53,7 @@ namespace MyList.Tests
             Assert.True(wasInvoked);
             Assert.Equal(value, insertedItem);
         }
+
         [Fact]
         public void ItemInserted_WhenInsertedInEmptyAt0_MustInvoke()
         {
@@ -66,6 +68,7 @@ namespace MyList.Tests
             Assert.True(wasInvoked);
             Assert.Equal(1, insertedItem);
         }
+
         [Theory]
         [InlineData(1)]
         [InlineData(3)]
@@ -83,6 +86,7 @@ namespace MyList.Tests
             Assert.True(wasInvoked);
             Assert.Equal(value, removedItem);
         }
+
         [Theory]
         [InlineData(0)]
         [InlineData(2)]

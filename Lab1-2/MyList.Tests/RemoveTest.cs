@@ -61,8 +61,8 @@ namespace MyList.Tests
 
             Action removeAt = () => coll.RemoveAt(index);
 
-            var exc = Assert.Throws<ArgumentOutOfRangeException>(removeAt);
-            Assert.Equal("Argument was out of range", exc.ParamName);
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(removeAt);
+            Assert.Equal("Argument was out of range", exception.ParamName);
         }
 
         [Fact]
