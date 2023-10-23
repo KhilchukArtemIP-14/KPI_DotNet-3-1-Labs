@@ -28,6 +28,7 @@ namespace MyList.Tests
                 Assert.Equal(arraySnapshot[i], targetArray[i]);
             }
         }
+
         [Fact]
         public void CopyTo_WhenArrayIsNull_MustThrow()
         {
