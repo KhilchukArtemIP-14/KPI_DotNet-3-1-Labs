@@ -11,7 +11,7 @@ namespace MyList.Tests
         [Fact]
         public void Cleared_WhenListCleared_MustInvoke()
         {
-            var list = new CustomList<int>() { 1,2,3,4,5 };
+            var list = new CustomList<int>() { 1, 2, 3, 4, 5 };
             var wasInvoked = false;
             EventHandler onClear = (sender, item) => wasInvoked = true;
             list.Cleared += onClear;
@@ -55,7 +55,7 @@ namespace MyList.Tests
         }
 
         [Fact]
-        public void ItemInserted_WhenInsertedInEmptyAt0_MustInvoke()
+        public void ItemInserted_WhenInsertedInEmptyAtStart_MustInvoke()
         {
             var list = new CustomList<int>();
             var wasInvoked = false;
@@ -123,20 +123,5 @@ namespace MyList.Tests
             Assert.True(wasInvoked);
             Assert.Equal(index, indexToBeSet);
         }
-        /*[Theory]
-        [InlineData(-1, 0)]
-        [InlineData(6, 6)]
-        public void ItemInserted_WhenInsertedOutside_MustNotInvoke(int index, int value)
-        {
-            var list = new CustomList<int>() { 1, 2, 3, 4, 5 };
-            var wasInvoked = false;
-            EventHandler<int> onInseted = (sender, item) => wasInvoked = true;
-            list.ItemInserted += onInseted;
-
-            list.Insert(index, value);
-
-            Assert.False(wasInvoked);
-        }*/
-
     }
 }

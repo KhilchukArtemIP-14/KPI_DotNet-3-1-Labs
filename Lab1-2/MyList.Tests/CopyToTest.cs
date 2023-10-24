@@ -9,11 +9,12 @@ namespace MyList.Tests
     {
         [Theory]
         [MemberData(nameof(GetValidCopyToData))]
-        public void CopyTo_WhenUsedProperly_MustSucceed(int[] targetArray, int startIndex, CustomList<int> coll)
+        public void CopyTo_WhenArrayCanFit_MustSucceed(int[] targetArray, int startIndex, CustomList<int> coll)
         {
             int[] arraySnapshot = (int[])targetArray.Clone();
 
             coll.CopyTo(targetArray, startIndex);
+
             int i = 0;
             for (; i < startIndex; i++)
             {
@@ -29,6 +30,16 @@ namespace MyList.Tests
             }
         }
 
+        [Theory]
+        [MemberData(nameof(GetInvalidCopyToData))]
+        public void CopyTo_WhenArrayCantFit_MustThrow(int[] targetArray, int startIndex, CustomList<int> coll)
+        {
+            Action copyToSmall = () => coll.CopyTo(targetArray, startIndex);
+
+            var exception = Assert.Throws<Exception>(copyToSmall);
+            Assert.Equal("Array doesn't have enough space", exception.Message);
+        }
+
         [Fact]
         public void CopyTo_WhenArrayIsNull_MustThrow()
         {
@@ -41,15 +52,6 @@ namespace MyList.Tests
             Assert.Equal("Array is null",exception.Message);
         }
 
-        [Theory]
-        [MemberData(nameof(GetInvalidCopyToData))]
-        public void CopyTo_WhenArrayCantFit_MustThrow(int[] targetArray, int startIndex, CustomList<int> coll)
-        {
-            Action copyToNull = () => coll.CopyTo(targetArray, startIndex);
-
-            var exception = Assert.Throws<Exception>(copyToNull);
-            Assert.Equal("Array doesn't have enough space", exception.Message);
-        }
         public static IEnumerable<object[]> GetValidCopyToData()
         {
             //returns array to copy data to, starting index, and collection itself

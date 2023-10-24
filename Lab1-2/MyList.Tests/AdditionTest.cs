@@ -45,7 +45,7 @@ namespace MyList.Tests
 
         [Theory]
         [MemberData(nameof(GetInsertInValidTestData))]
-        public void Insert_WhenIndexNotRight(Tuple<int, int> valueIndex, CustomList<int> coll)
+        public void Insert_WhenIndexIsOutside_MustThrow(Tuple<int, int> valueIndex, CustomList<int> coll)
         {
             int value = valueIndex.Item1;
             int index = valueIndex.Item2;

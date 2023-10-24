@@ -9,14 +9,13 @@ namespace MyList.Tests
     public class IndexerTest
     {
         [Theory]
-        [MemberData(nameof(GetGetterValidData))]
+        [MemberData(nameof(GetSetterValidData))]
         public void Set_WhenIndexIsCorrect_MustSucced(int index, int value, CustomList<int> coll)
         {
             coll[index] = value;
+
             int i = 0;
-
             int actualValue = -1;
-
             foreach(var a in coll)
             {
                 if (i == index)
@@ -26,6 +25,7 @@ namespace MyList.Tests
                 }
                 i++;
             }
+
             Assert.Equal(value, actualValue);
         }
 
@@ -40,7 +40,7 @@ namespace MyList.Tests
         }
 
         [Theory]
-        [MemberData(nameof(GetSetterValidData))]
+        [MemberData(nameof(GetGetterValidData))]
         public void Get_WhenIndexIsCorrect_MustSucced(int index, int expectedValue, CustomList<int> coll)
         {
             int actual = coll[index];
@@ -57,14 +57,14 @@ namespace MyList.Tests
             var exception = Assert.Throws<IndexOutOfRangeException>(wrongSet);
             Assert.Equal("Index was out of range", exception.Message);
         }
-        public static IEnumerable<object[]> GetGetterValidData()
+        public static IEnumerable<object[]> GetSetterValidData()
         {
             //returns index, value and collection
             yield return new object[] { 0, 6, new CustomList<int> { 1, 2, 3, 4, 5 } };
             yield return new object[] { 4, 6, new CustomList<int> { 1, 2, 3, 4, 5 } };
             yield return new object[] { 2, 6, new CustomList<int> { 1, 2, 3, 4, 5 } };
         }
-        public static IEnumerable<object[]> GetSetterValidData()
+        public static IEnumerable<object[]> GetGetterValidData()
         {
             //returns index, expected value and collection
             yield return new object[] { 0, 1, new CustomList<int> { 1, 2, 3, 4, 5 } };
