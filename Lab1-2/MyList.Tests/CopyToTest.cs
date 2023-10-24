@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using MyList;
+using System.Linq;
+
 namespace MyList.Tests
 {
     public class CopyToTest
@@ -15,19 +17,9 @@ namespace MyList.Tests
 
             coll.CopyTo(targetArray, startIndex);
 
-            int i = 0;
-            for (; i < startIndex; i++)
-            {
-                Assert.Equal(arraySnapshot[i], targetArray[i]);
-            }
-            for (; i < startIndex+coll.Count; i++)
-            {
-                Assert.Equal(coll[i - startIndex], targetArray[i]);
-            }
-            for (; i < targetArray.Length; i++)
-            {
-                Assert.Equal(arraySnapshot[i], targetArray[i]);
-            }
+            Assert.Equal(arraySnapshot.Take(startIndex), targetArray.Take(startIndex));
+            Assert.Equal(coll, targetArray.Skip(startIndex).Take(coll.Count));
+            Assert.Equal(arraySnapshot.Skip(startIndex + coll.Count), targetArray.Skip(startIndex + coll.Count));
         }
 
         [Theory]

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Xunit;
 using MyList;
+using System.Linq;
 
 namespace MyList.Tests
 {
@@ -14,18 +15,7 @@ namespace MyList.Tests
         {
             coll[index] = value;
 
-            int i = 0;
-            int actualValue = -1;
-            foreach(var a in coll)
-            {
-                if (i == index)
-                {
-                    actualValue = a;
-                    break;
-                }
-                i++;
-            }
-
+            int actualValue = coll.ElementAt(index);
             Assert.Equal(value, actualValue);
         }
 

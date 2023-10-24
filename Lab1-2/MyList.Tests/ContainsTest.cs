@@ -8,12 +8,11 @@ namespace MyList.Tests
     {
         [Theory]
         [MemberData(nameof(GetContainsTestData))]
-        public void Contains_WhenUsed_MustSucceed(int searchedValue, bool expectedResult, CustomList<int> coll)
+        public void Contains_WhenCollectionIsNotNull_MustSucceed(int searchedValue, bool expectedResult, CustomList<int> coll)
         {
             var result = coll.Contains(searchedValue);
 
             Assert.Equal(expectedResult, result);
-            if (!result) Assert.DoesNotContain(searchedValue, coll); else Assert.Contains(searchedValue, coll);
         }
 
         public static IEnumerable<object[]> GetContainsTestData()

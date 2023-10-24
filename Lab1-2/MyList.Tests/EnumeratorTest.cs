@@ -107,7 +107,7 @@ namespace MyList.Tests
         }
 
         [Fact]
-        public void Reset_WhenCollectionIsEmpty_MustPointAtDefault()
+        public void Reset_WhenCollectionIsEmpty_EnumeratorMustPointAtDefault()
         {
             CustomList<int> coll = new CustomList<int>();
             var enumerator = coll.GetEnumerator();
