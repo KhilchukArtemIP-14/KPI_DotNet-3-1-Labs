@@ -35,7 +35,7 @@ namespace MyList
             _version++;
             Cleared?.Invoke(this, EventArgs.Empty);
         }
-       
+        
         public int IndexOf(T item)
         {
             int i = 0;
