@@ -16,7 +16,7 @@ using Azure.Core;
 
 namespace GoodsStorage.DAL.Repositories.Implementations
 {
-    internal class RequestRepository : IRequestRepository
+    public class RequestRepository : IRequestRepository
     {
         private readonly GoodsStorageDbContext _dbContext;
 
@@ -151,5 +151,4 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             return null;
         }
     }
-
 }

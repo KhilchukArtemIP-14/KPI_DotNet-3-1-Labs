@@ -10,7 +10,7 @@ using Request = GoodsStorage.DAL.Models.Domain.Request;
 
 namespace GoodsStorage.DAL.Data
 {
-    internal class GoodsStorageDbContext: DbContext
+    public class GoodsStorageDbContext: DbContext
     {
         public GoodsStorageDbContext(DbContextOptions<GoodsStorageDbContext> options): base(options)
         {

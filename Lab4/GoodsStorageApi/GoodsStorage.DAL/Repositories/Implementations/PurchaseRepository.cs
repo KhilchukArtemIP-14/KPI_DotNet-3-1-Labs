@@ -12,7 +12,7 @@ using Request = GoodsStorage.DAL.Models.Domain.Request;
 
 namespace GoodsStorage.DAL.Repositories.Implementations
 {
-    internal class PurchaseRepository : IPurchaseRepository
+    public class PurchaseRepository : IPurchaseRepository
     {
         private readonly GoodsStorageDbContext _dbContext;
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GoodsStorage.DAL.Repositories.Interfaces
 {
-    internal interface IRequestRepository
+    public interface IRequestRepository
     {
         public Task<IEnumerable<RequestDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, int? userId = null, bool? activeOnly = false);
         public Task<RequestDTO> GetByIdAsync(Guid id);

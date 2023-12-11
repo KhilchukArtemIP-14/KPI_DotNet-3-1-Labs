@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace GoodsStorage.DAL.Repositories.Implementations
 {
-    internal class GoodRepository : IGoodRepository
+    public class GoodRepository : IGoodRepository
     {
         private readonly GoodsStorageDbContext _dbContext;
         public GoodRepository(GoodsStorageDbContext dbContext)

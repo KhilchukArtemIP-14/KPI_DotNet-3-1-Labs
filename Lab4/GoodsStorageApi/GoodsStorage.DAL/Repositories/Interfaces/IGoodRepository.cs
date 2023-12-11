@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 
 namespace GoodsStorage.DAL.Repositories.Interfaces
 {
-    internal interface IGoodRepository
+    public interface IGoodRepository
     {
-        //private readonly GoodsStorageDbContext _dbContext;
         public Task<IEnumerable<GoodDTO>> GetAllAsync(int pageNumber=1, int pageSize = 5);
         public Task<GoodDTO> GetByIdAsync(Guid id);
         public Task<Guid> AddAsync(GoodDTO dto);
