@@ -12,7 +12,7 @@ using GoodsStorage.BAL.Models;
 
 namespace GoodsStorage.BAL.Services.Implementations
 {
-    internal class GoodsService : IGoodsService
+    public class GoodsService : IGoodsService
     {
         private readonly IGoodRepository _repository;
 

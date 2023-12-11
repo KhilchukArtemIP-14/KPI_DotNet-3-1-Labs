@@ -21,5 +21,9 @@ namespace GoodsStorage.DAL.Data
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseGood> PurchaseGoods { get; set; }
         public DbSet<Request> Requests { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<PurchaseGood>().HasKey(pg => new { pg.PurchaseId, pg.GoodId });
+        }
     }
 }

@@ -30,7 +30,7 @@ namespace GoodsStorage.BAL.Models
             return new BaseResponse<T>()
             {
                 Data = data,
-                Status = Status.Error
+                Status = Status.Ok
             };
         }
     }

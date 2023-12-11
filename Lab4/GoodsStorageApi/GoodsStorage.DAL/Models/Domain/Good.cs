@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace GoodsStorage.DAL.Models.Domain
 {
-    internal class Good
+    public class Good
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
