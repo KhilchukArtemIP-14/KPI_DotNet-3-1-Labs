@@ -1,6 +1,7 @@
 ﻿using GoodsStorage.BAL.Models;
 using GoodsStorage.BAL.Services.Interfaces;
 using GoodsStorage.DAL.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoodsStorage.API.Controllers
