@@ -56,14 +56,14 @@ namespace GoodsStorage.BAL.Services.Implementations
                     user.UserName=updatedUserSummary.UserName;
                     user.PhoneNumber=updatedUserSummary.PhoneNumber;
 
+                    await _userManager.UpdateAsync(user);
 
                     var updatedSummary = new UserSummaryDTO()
                     {
-                        UserName = updatedUserSummary.UserName,
-                        UserEmail = updatedUserSummary.UserEmail,
-                        PhoneNumber = updatedUserSummary.PhoneNumber
+                        UserName = user.UserName,
+                        UserEmail = user.Email,
+                        PhoneNumber = user.PhoneNumber
                     };
-                    await _userManager.UpdateAsync(user);
                     return BaseResponse<UserSummaryDTO>.OkResponse(updatedSummary);
                 }
                 catch (Exception ex)

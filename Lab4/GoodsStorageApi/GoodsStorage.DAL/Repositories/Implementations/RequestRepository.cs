@@ -67,13 +67,13 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             return null;
         }
 
-        public async Task<IEnumerable<RequestDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, int? userId = null, bool? activeOnly = false)
+        public async Task<IEnumerable<RequestDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string? userId = null, bool? activeOnly = false)
         {
             var query = _dbContext.Requests.AsQueryable();
 
-            if (userId.HasValue)
+            if (userId!=null)
             {
-                query = query.Where(r => r.CustomerId == userId.Value);
+                query = query.Where(r => r.CustomerId == userId);
             }
 
             if (activeOnly.HasValue && activeOnly.Value)

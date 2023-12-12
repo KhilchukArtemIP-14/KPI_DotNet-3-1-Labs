@@ -57,7 +57,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             }
         }
 
-        public async Task<BaseResponse<IEnumerable<RequestDTO>>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, int? userId = null, bool? activeOnly = false)
+        public async Task<BaseResponse<IEnumerable<RequestDTO>>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string userId = null, bool? activeOnly = false)
         {
             if (pageNumber < 1 || pageSize < 1)
             {

@@ -42,13 +42,13 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             return purchase.Id;
         }
 
-        public async Task<IEnumerable<PurchaseDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, int? userId = null)
+        public async Task<IEnumerable<PurchaseDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string? userId = null)
         {
             var query = _dbContext.Purchases.AsQueryable();
 
-            if (userId.HasValue)
+            if (userId!=null)
             {
-                query = query.Where(p => p.UserId == userId.Value);
+                query = query.Where(p => p.UserId == userId);
             }
 
             var purchases = await query

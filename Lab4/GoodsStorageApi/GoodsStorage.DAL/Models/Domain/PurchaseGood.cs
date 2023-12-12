@@ -10,15 +10,9 @@ namespace GoodsStorage.DAL.Models.Domain
 {
     public class PurchaseGood
     {
-        [Key]
-        [Column(Order = 1)]
         public Guid GoodId { get; set; }
-
-        [Key]
-        [Column(Order = 2)]
         public Guid PurchaseId { get; set; }
         public int Amount { get; set; }
-
         public Good Good { get; set; }
         public Purchase Purchase { get; set; }
     }

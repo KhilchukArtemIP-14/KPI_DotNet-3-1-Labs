@@ -2,6 +2,7 @@
 using GoodsStorage.DAL.Models.DTO;
 using Microsoft.AspNetCore.Mvc;
 using GoodsStorage.BAL.Models;
+using Microsoft.AspNetCore.Authorization;
 namespace GoodsStorage.API.Controllers
 {
     [Route("api/[controller]")]
@@ -32,8 +33,8 @@ namespace GoodsStorage.API.Controllers
             
             return Ok(good.Data);
         }
-
         [HttpPost]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> Create([FromBody] GoodDTO model)
         {
             var good = await _goodsService.AddAsync(model);
@@ -44,6 +45,7 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> Update(Guid id, [FromBody] GoodDTO model)
         {
             var result = await _goodsService.UpdateAsync(id, model);
@@ -54,6 +56,7 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Staff")]
         public async Task<IActionResult> Delete(Guid id)
         {
             {

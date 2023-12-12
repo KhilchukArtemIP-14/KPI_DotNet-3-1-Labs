@@ -11,18 +11,28 @@ namespace GoodsStorage.API.Controllers
     public class PurchasesController : ControllerBase
     {
         private readonly IPurchaseService _purchaseService;
+        private readonly IAuthorizationService _authorizationService;
 
-        public PurchasesController(IPurchaseService purchaseService)
+        public PurchasesController(IPurchaseService purchaseService, IAuthorizationService authorizationService)
         {
             _purchaseService = purchaseService;
+            _authorizationService = authorizationService;
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] int? userId = null, [FromQuery] int pageSize = 5, [FromQuery] int pageNumber = 1)
+        public async Task<IActionResult> GetAll([FromQuery] string userId = null, [FromQuery] int pageSize = 5, [FromQuery] int pageNumber = 1)
         {
             var purchases = await _purchaseService.GetAllAsync(pageNumber, pageSize, userId);
 
-            if (purchases.Status == Status.Ok) return Ok(purchases.Data);
+            if (purchases.Status == Status.Ok) { 
+                
+                foreach(var a in purchases.Data)
+                {
+                    var result = await _authorizationService.AuthorizeAsync(User, a, "CanAccessPurchasePolicy");
+                    if(!result.Succeeded) return new ForbidResult();
+                }
+                return Ok(purchases.Data); 
+            }
 
             return StatusCode(500);
         }
@@ -32,12 +42,18 @@ namespace GoodsStorage.API.Controllers
         {
             var purchase = await _purchaseService.GetByIdAsync(id);
 
-            if (purchase.Status == Status.Error) return NotFound();
+            if (purchase.Status == Status.Ok) {
 
-            return Ok(purchase.Data);
+                var result = await _authorizationService.AuthorizeAsync(User, purchase.Data, "CanAccessPurchasePolicy");
+                if (!result.Succeeded) return new ForbidResult();
+                return Ok(purchase.Data);
+            }
+
+            return NotFound();
         }
 
         [HttpPost]
+        [Authorize("Staff")]
         public async Task<IActionResult> Create([FromBody] PurchaseDTO model)
         {
             var purchase = await _purchaseService.AddAsync(model);

@@ -10,9 +10,9 @@ namespace GoodsStorage.DAL.Models.DTO
     public class PurchaseDTO
     {
         [Required(ErrorMessage ="Buyers ID not provided")]
-        public int UserId { get; set; }
+        public string UserId { get; set; }
         [Required(ErrorMessage = "Staff representative ID not provided")]
-        public int StaffRepId { get; set; }
+        public string StaffRepId { get; set; }
         [Required(ErrorMessage = "Date not provided")]
         public DateTime Date { get; set; }
         [Required(ErrorMessage = "Items bought not provided")]

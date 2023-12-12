@@ -10,7 +10,7 @@ namespace GoodsStorage.DAL.Models.Domain
     {
         public Guid Id { get; set; }
         public Guid GoodId { get; set; }
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         public int Amount { get; set; }
         public DateTime Date { get; set; }
         public Decimal ExpectedPrice { get; set; }

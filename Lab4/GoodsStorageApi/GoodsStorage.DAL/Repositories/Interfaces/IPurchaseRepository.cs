@@ -9,7 +9,7 @@ namespace GoodsStorage.DAL.Repositories.Interfaces
 {
     public interface IPurchaseRepository
     {
-        public Task<IEnumerable<PurchaseDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, int? userId = null);
+        public Task<IEnumerable<PurchaseDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string? userId = null);
         public Task<PurchaseDTO> GetByIdAsync(Guid id);
         public Task<Guid> AddAsync(PurchaseDTO dto);
     }

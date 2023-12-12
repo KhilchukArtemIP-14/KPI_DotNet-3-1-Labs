@@ -31,7 +31,7 @@ namespace GoodsStorage.API.Controllers
         {
             var result = await _authService.Login(dto);
 
-            if (result.Status == Status.Ok) return Ok(result.Data);
+            if (result.Status == Status.Ok) return Ok(new {Jwt = result.Data });
 
             return BadRequest(result.Description);
         }

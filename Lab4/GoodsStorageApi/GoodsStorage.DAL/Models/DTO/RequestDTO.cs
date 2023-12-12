@@ -13,7 +13,7 @@ namespace GoodsStorage.DAL.Models.DTO
         [Required(ErrorMessage = "Good ID not provided")]
         public Guid GoodId { get; set; }
         [Required(ErrorMessage = "Customer ID not provided")]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
         [Required(ErrorMessage = "Amount not provided")]
         [Range(1, int.MaxValue, ErrorMessage = "Amount must be non-negative")]
         public int Amount { get; set; }

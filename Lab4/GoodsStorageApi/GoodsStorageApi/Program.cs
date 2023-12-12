@@ -12,6 +12,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Authorization;
+using GoodsStorage.API.Authorization;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -69,6 +71,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 builder.Services.AddScoped<IUserSummaryService, UserSummaryService>();
 
+builder.Services.AddScoped<IAuthorizationHandler, CanAccessPurchaseHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, CanAccessRequestHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, CanAccessUserSummaryHandler>();
+
+builder.Services.AddScoped<IAuthorizationRequirement, CanAccessPurchaseRequirement>();
+builder.Services.AddScoped<IAuthorizationRequirement, CanAccessRequestRequirement>();
+builder.Services.AddScoped<IAuthorizationRequirement, CanAccessUserSummaryRequirement>();
+
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("GoodsStorage")
@@ -95,6 +105,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidAudience = builder.Configuration["audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
     });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("CanAccessUserSummaryPolicy", policy =>
+    {
+        policy.Requirements.Add(new CanAccessUserSummaryRequirement());
+    });
+
+    options.AddPolicy("CanAccessRequestPolicy", policy =>
+    {
+        policy.Requirements.Add(new CanAccessRequestRequirement());
+    });
+
+    options.AddPolicy("CanAccessPurchasePolicy", policy =>
+    {
+        policy.Requirements.Add(new CanAccessPurchaseRequirement());
+    });
+});
 
 var app = builder.Build();
 
