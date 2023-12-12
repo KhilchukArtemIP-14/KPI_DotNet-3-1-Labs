@@ -67,6 +67,8 @@ builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 
+builder.Services.AddScoped<IUserSummaryService, UserSummaryService>();
+
 builder.Services.AddIdentityCore<IdentityUser>()
     .AddRoles<IdentityRole>()
     .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("GoodsStorage")

@@ -3,6 +3,7 @@ using GoodsStorage.BAL.Services.Implementations;
 using GoodsStorage.BAL.Services.Interfaces;
 using GoodsStorage.BAL.Models.DTO;
 using GoodsStorage.BAL.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace GoodsStorage.API.Controllers
 {
@@ -23,7 +24,6 @@ namespace GoodsStorage.API.Controllers
             if(result.Status==Status.Ok) return Ok("User successfully created");
 
             return BadRequest(result.Description);
-
         }
 
         [HttpPost("login")]
