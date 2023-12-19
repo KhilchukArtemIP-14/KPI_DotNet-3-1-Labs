@@ -20,7 +20,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             _repository = repository;
         }
 
-        public async Task<BaseResponse<Guid>> AddAsync(RequestDTO dto)
+        public async Task<BaseResponse<Guid>> AddAsync(ModifyRequestDTO dto)
         {
             ValidationContext context = new ValidationContext(dto, null, null);
             List<ValidationResult> validationResults = new List<ValidationResult>();
@@ -57,7 +57,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             }
         }
 
-        public async Task<BaseResponse<IEnumerable<RequestDTO>>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string userId = null, bool? activeOnly = false)
+        public async Task<BaseResponse<IEnumerable<RequestDTO>>> GetAllAsync(int pageNumber = 1, int pageSize = 5, string userId = null, bool activeOnly = false)
         {
             if (pageNumber < 1 || pageSize < 1)
             {
@@ -89,7 +89,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             }
         }
 
-        public async Task<BaseResponse<RequestDTO>> UpdateAsync(Guid id, RequestDTO dto)
+        public async Task<BaseResponse<RequestDTO>> UpdateAsync(Guid id, ModifyRequestDTO dto)
         {
             ValidationContext context = new ValidationContext(dto, null, null);
             List<ValidationResult> validationResults = new List<ValidationResult>();

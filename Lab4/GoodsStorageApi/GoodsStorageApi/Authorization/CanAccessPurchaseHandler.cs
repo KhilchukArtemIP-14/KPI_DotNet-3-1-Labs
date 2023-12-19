@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using GoodsStorage.DAL.Models.DTO;
 using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 namespace GoodsStorage.API.Authorization
 {
     public class CanAccessPurchaseHandler: AuthorizationHandler<CanAccessPurchaseRequirement, PurchaseDTO>
@@ -16,13 +17,14 @@ namespace GoodsStorage.API.Authorization
             CanAccessPurchaseRequirement requirement,
             PurchaseDTO resource)
         {
-            var appUser = await _userManager.GetUserAsync(context.User);
-            if (appUser == null)
+            var userIdClaim = context.User.FindFirst("userId");
+            if (userIdClaim != null && resource.UserId == userIdClaim.Value)
             {
+                context.Succeed(requirement);
                 return;
             }
 
-            if (resource.UserId == appUser.Id || context.User.IsInRole("Staff"))
+            if (context.User.IsInRole("Staff"))
             {
                 context.Succeed(requirement);
             }

@@ -20,5 +20,7 @@
     <ProjectReference Include="..\GoodsStorage.BAL\GoodsStorage.BAL.csproj" />
     <ProjectReference Include="..\GoodsStorage.DAL\GoodsStorage.DAL.csproj" />
   </ItemGroup>
-
+	<ItemGroup>
+		<InternalsVisibleTo Include="GoodsStorageApi.IntegrationTests"/>
+	</ItemGroup>
 </Project>

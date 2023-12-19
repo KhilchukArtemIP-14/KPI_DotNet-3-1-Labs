@@ -20,7 +20,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             _repository = repository;
         }
 
-        public async Task<BaseResponse<Guid>> AddAsync(PurchaseDTO dto)
+        public async Task<BaseResponse<Guid>> AddAsync(CreatePurchaseDTO dto)
         {
             ValidationContext context = new ValidationContext(dto, null, null);
             List<ValidationResult> validationResults = new List<ValidationResult>();
@@ -43,7 +43,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             }
         }
 
-        public async Task<BaseResponse<IEnumerable<PurchaseDTO>>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string userId = null)
+        public async Task<BaseResponse<IEnumerable<PurchaseDTO>>> GetAllAsync(int pageNumber = 1, int pageSize = 5, string userId = null)
         {
             if (pageNumber < 1 || pageSize < 1)
             {

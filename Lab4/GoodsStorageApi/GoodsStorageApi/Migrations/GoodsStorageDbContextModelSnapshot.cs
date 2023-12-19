@@ -63,11 +63,13 @@ namespace GoodsStorage.API.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("StaffRepId")
-                        .HasColumnType("int");
+                    b.Property<string>("StaffRepId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -77,12 +79,10 @@ namespace GoodsStorage.API.Migrations
             modelBuilder.Entity("GoodsStorage.DAL.Models.Domain.PurchaseGood", b =>
                 {
                     b.Property<Guid>("PurchaseId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(2);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("GoodId")
-                        .HasColumnType("uniqueidentifier")
-                        .HasColumnOrder(1);
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<int>("Amount")
                         .HasColumnType("int");
@@ -103,8 +103,9 @@ namespace GoodsStorage.API.Migrations
                     b.Property<int>("Amount")
                         .HasColumnType("int");
 
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
+                    b.Property<string>("CustomerId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");

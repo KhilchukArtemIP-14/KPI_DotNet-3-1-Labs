@@ -9,12 +9,8 @@ namespace GoodsStorage.DAL.Models.DTO
 {
     public class PurchaseGoodDTO
     {
-        [Required(ErrorMessage = "Good ID not provided")]
         public Guid GoodId { get; set; }
-        [Required(ErrorMessage = "Purchase ID not provided")]
-        public Guid PurchaseId { get; set; }
-        [Required(ErrorMessage = "Amount not provided")]
-        [Range(1, int.MaxValue, ErrorMessage = "Available amount must be positive")]
+        public string GoodName { get; set; }
         public int Amount { get; set; }
     }
 }

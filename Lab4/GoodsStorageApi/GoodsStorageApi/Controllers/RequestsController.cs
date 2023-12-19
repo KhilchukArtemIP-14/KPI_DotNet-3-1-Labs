@@ -22,11 +22,10 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Staff")]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] string userId = null, [FromQuery] int pageSize = 5, [FromQuery] int pageNumber = 1, [FromQuery] bool activeOnly = false)
         {
             var requests = await _requestService.GetAllAsync(pageNumber, pageSize, userId, activeOnly);
-
             if (requests.Status == Status.Ok)
             {
 
@@ -42,6 +41,7 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> GetById(Guid id)
         {
             var request = await _requestService.GetByIdAsync(id);
@@ -56,6 +56,7 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpDelete("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> DeleteById(Guid id)
         {
             var request = await _requestService.GetByIdAsync(id);
@@ -71,9 +72,10 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] RequestDTO model)
+        [Authorize]
+        public async Task<IActionResult> Update(Guid id, [FromBody] ModifyRequestDTO model)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, model, "CanAccessRequestPolicy");
+            var authResult = await _authorizationService.AuthorizeAsync(User, model, "CanCreateRequestPolicy");
             if (!authResult.Succeeded) return new ForbidResult();
 
             var result = await _requestService.UpdateAsync(id, model);
@@ -84,9 +86,10 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] RequestDTO model)
+        [Authorize]
+        public async Task<IActionResult> Create([FromBody] ModifyRequestDTO model)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, model, "CanAccessRequestPolicy");
+            var authResult = await _authorizationService.AuthorizeAsync(User, model, "CanCreateRequestPolicy");
             if (!authResult.Succeeded) return new ForbidResult();
 
             var result = await _requestService.AddAsync(model);
@@ -96,5 +99,4 @@ namespace GoodsStorage.API.Controllers
             return BadRequest(result.Description);
         }
     }
-
 }

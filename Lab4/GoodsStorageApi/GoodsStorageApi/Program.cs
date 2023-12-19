@@ -14,33 +14,37 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Authorization;
 using GoodsStorage.API.Authorization;
-var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-
-var connection = builder.Configuration.GetConnectionString("DefaultConnection");
-builder.Services.AddDbContext<GoodsStorageDbContext>(options => {
-    options.UseSqlServer(connection, b => b.MigrationsAssembly("GoodsStorage.API"));
-    });
-
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen(options =>
+public class Program
 {
-    options.SwaggerDoc("v1", new OpenApiInfo() { Title = "Goods Storage Api", Version = "v1" });
-
-    options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+    private static void Main(string[] args)
     {
-        Name = "Authorization",
-        In = ParameterLocation.Header,
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = JwtBearerDefaults.AuthenticationScheme
-    });
+        var builder = WebApplication.CreateBuilder(args);
 
-    options.AddSecurityRequirement(new OpenApiSecurityRequirement
-    {
+        builder.Services.AddControllers();
+
+        var connection = builder.Configuration.GetConnectionString("DefaultConnection");
+        builder.Services.AddDbContext<GoodsStorageDbContext>(options =>
+        {
+            options.UseSqlServer(connection, b => b.MigrationsAssembly("GoodsStorage.API"));
+        });
+
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(options =>
+        {
+            options.SwaggerDoc("v1", new OpenApiInfo() { Title = "Goods Storage Api", Version = "v1" });
+
+            options.AddSecurityDefinition(JwtBearerDefaults.AuthenticationScheme, new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = JwtBearerDefaults.AuthenticationScheme
+            });
+
+            options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
         {
             new OpenApiSecurityScheme
             {
@@ -55,89 +59,97 @@ builder.Services.AddSwaggerGen(options =>
             },
             new List<string>()
         }
-    });
-});
+            });
+        });
 
-builder.Services.AddScoped<IGoodRepository,GoodRepository>();
-builder.Services.AddScoped<IGoodsService, GoodsService>();
+        builder.Services.AddScoped<IGoodRepository, GoodRepository>();
+        builder.Services.AddScoped<IGoodsService, GoodsService>();
 
-builder.Services.AddScoped<IRequestRepository, RequestRepository>();
-builder.Services.AddScoped<IRequestService, RequestService>();
+        builder.Services.AddScoped<IRequestRepository, RequestRepository>();
+        builder.Services.AddScoped<IRequestService, RequestService>();
 
-builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
-builder.Services.AddScoped<IPurchaseService, PurchaseService>();
+        builder.Services.AddScoped<IPurchaseRepository, PurchaseRepository>();
+        builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 
-builder.Services.AddScoped<IAuthService, AuthService>();
+        builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddScoped<IUserSummaryService, UserSummaryService>();
+        builder.Services.AddScoped<IUserSummaryService, UserSummaryService>();
 
-builder.Services.AddScoped<IAuthorizationHandler, CanAccessPurchaseHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, CanAccessRequestHandler>();
-builder.Services.AddScoped<IAuthorizationHandler, CanAccessUserSummaryHandler>();
+        builder.Services.AddScoped<IAuthorizationHandler, CanAccessPurchaseHandler>();
+        builder.Services.AddScoped<IAuthorizationHandler, CanAccessRequestHandler>();
+        builder.Services.AddScoped<IAuthorizationHandler, CanAccessUserSummaryHandler>();
+        builder.Services.AddScoped<IAuthorizationHandler, CanCreateRequestHandler>();
 
-builder.Services.AddScoped<IAuthorizationRequirement, CanAccessPurchaseRequirement>();
-builder.Services.AddScoped<IAuthorizationRequirement, CanAccessRequestRequirement>();
-builder.Services.AddScoped<IAuthorizationRequirement, CanAccessUserSummaryRequirement>();
+        builder.Services.AddScoped<IAuthorizationRequirement, CanAccessPurchaseRequirement>();
+        builder.Services.AddScoped<IAuthorizationRequirement, CanAccessRequestRequirement>();
+        builder.Services.AddScoped<IAuthorizationRequirement, CanAccessUserSummaryRequirement>();
+        builder.Services.AddScoped<IAuthorizationRequirement, CanCreateRequestRequirement>();
 
-builder.Services.AddIdentityCore<IdentityUser>()
-    .AddRoles<IdentityRole>()
-    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("GoodsStorage")
-    .AddEntityFrameworkStores<GoodsStorageDbContext>()
-    .AddDefaultTokenProviders();
+        builder.Services.AddIdentityCore<IdentityUser>()
+            .AddRoles<IdentityRole>()
+            .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("GoodsStorage")
+            .AddEntityFrameworkStores<GoodsStorageDbContext>()
+            .AddDefaultTokenProviders();
 
-builder.Services.Configure<IdentityOptions>(options =>
-{
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-    options.Password.RequiredLength = 8;
-    options.Password.RequiredUniqueChars = 1;
-});
+        builder.Services.Configure<IdentityOptions>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = 8;
+            options.Password.RequiredUniqueChars = 1;
+        });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    });
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                ValidAudience = builder.Configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+            });
 
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy("CanAccessUserSummaryPolicy", policy =>
-    {
-        policy.Requirements.Add(new CanAccessUserSummaryRequirement());
-    });
+        builder.Services.AddAuthorization(options =>
+        {
+            options.AddPolicy("CanAccessUserSummaryPolicy", policy =>
+            {
+                policy.Requirements.Add(new CanAccessUserSummaryRequirement());
+            });
 
-    options.AddPolicy("CanAccessRequestPolicy", policy =>
-    {
-        policy.Requirements.Add(new CanAccessRequestRequirement());
-    });
+            options.AddPolicy("CanAccessRequestPolicy", policy =>
+            {
+                policy.Requirements.Add(new CanAccessRequestRequirement());
+            });
 
-    options.AddPolicy("CanAccessPurchasePolicy", policy =>
-    {
-        policy.Requirements.Add(new CanAccessPurchaseRequirement());
-    });
-});
+            options.AddPolicy("CanAccessPurchasePolicy", policy =>
+            {
+                policy.Requirements.Add(new CanAccessPurchaseRequirement());
+            });
+            options.AddPolicy("CanCreateRequestPolicy", policy =>
+            {
+                policy.Requirements.Add(new CanCreateRequestRequirement());
+            });
+        });
 
-var app = builder.Build();
+        var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthentication();
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();

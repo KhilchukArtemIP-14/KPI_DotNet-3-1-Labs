@@ -11,8 +11,8 @@ namespace GoodsStorage.BAL.Services.Interfaces
     {
         public Task<BaseResponse<IEnumerable<GoodDTO>>> GetAllAsync(int pageNumber = 1, int pageSize = 5);
         public Task<BaseResponse<GoodDTO>> GetByIdAsync(Guid id);
-        public Task<BaseResponse<Guid>> AddAsync(GoodDTO dto);
-        public Task<BaseResponse<GoodDTO>> UpdateAsync(Guid id, GoodDTO dto);
+        public Task<BaseResponse<Guid>> AddAsync(ModifyGoodDTO dto);
+        public Task<BaseResponse<GoodDTO>> UpdateAsync(Guid id, ModifyGoodDTO dto);
         public Task<BaseResponse<GoodDTO>> DeleteAsync(Guid id);
     }
 }

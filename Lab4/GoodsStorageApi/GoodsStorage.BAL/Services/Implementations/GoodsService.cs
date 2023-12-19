@@ -20,7 +20,7 @@ namespace GoodsStorage.BAL.Services.Implementations
         {
             _repository = repository;
         }
-        public async Task<BaseResponse<Guid>> AddAsync(GoodDTO dto)
+        public async Task<BaseResponse<Guid>> AddAsync(ModifyGoodDTO dto)
         {
             ValidationContext context = new ValidationContext(dto, null, null);
             List<ValidationResult> validationResults = new List<ValidationResult>();
@@ -85,7 +85,7 @@ namespace GoodsStorage.BAL.Services.Implementations
             }
         }
 
-        public async Task<BaseResponse<GoodDTO>> UpdateAsync(Guid id, GoodDTO dto)
+        public async Task<BaseResponse<GoodDTO>> UpdateAsync(Guid id, ModifyGoodDTO dto)
         {
             ValidationContext context = new ValidationContext(dto, null, null);
             List<ValidationResult> validationResults = new List<ValidationResult>();

@@ -10,8 +10,8 @@ namespace GoodsStorage.BAL.Services.Interfaces
 {
     public interface IPurchaseService
     {
-        public Task<BaseResponse<IEnumerable<PurchaseDTO>>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string userId = null);
+        public Task<BaseResponse<IEnumerable<PurchaseDTO>>> GetAllAsync(int pageNumber = 1, int pageSize = 5, string userId = null);
         public Task<BaseResponse<PurchaseDTO>> GetByIdAsync(Guid id);
-        public Task<BaseResponse<Guid>> AddAsync(PurchaseDTO dto);
+        public Task<BaseResponse<Guid>> AddAsync(CreatePurchaseDTO dto);
     }
 }

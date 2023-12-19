@@ -17,13 +17,14 @@ namespace GoodsStorage.API.Authorization
             CanAccessRequestRequirement requirement,
             RequestDTO resource)
         {
-            var appUser = await _userManager.GetUserAsync(context.User);
-            if (appUser == null)
+            var userIdClaim = context.User.FindFirst("userId");
+            if (userIdClaim != null && resource.CustomerId == userIdClaim.Value)
             {
+                context.Succeed(requirement);
                 return;
             }
-            
-            if (resource.CustomerId == appUser.Id || context.User.IsInRole("Staff"))
+
+            if (context.User.IsInRole("Staff"))
             {
                 context.Succeed(requirement);
             }

@@ -5,6 +5,7 @@ using GoodsStorage.BAL.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
@@ -30,6 +31,7 @@ namespace GoodsStorage.BAL.Services.Implementations
                 {
                     var summary = new UserSummaryDTO()
                     {
+                        UserId= user.Id,
                         UserName = user.UserName,
                         UserEmail = user.Email,
                         PhoneNumber = user.PhoneNumber
@@ -45,8 +47,19 @@ namespace GoodsStorage.BAL.Services.Implementations
             return BaseResponse<UserSummaryDTO>.ErrorResponse("User summary retreival error: could not get user");
         }
 
-        public async Task<BaseResponse<UserSummaryDTO>> UpdateUserSummaryById(UserSummaryDTO updatedUserSummary, string userId)
+        public async Task<BaseResponse<UserSummaryDTO>> UpdateUserSummaryById(UpdateUserSummaryDTO updatedUserSummary, string userId)
         {
+
+            ValidationContext context = new ValidationContext(updatedUserSummary, null, null);
+            List<ValidationResult> validationResults = new List<ValidationResult>();
+
+            if (!Validator.TryValidateObject(updatedUserSummary, context, validationResults, true))
+            {
+                string message = String.Format("Creating good dto error: {0}", string.Join(", ", validationResults.Select(res => res.ErrorMessage).ToList()));
+
+                return BaseResponse<UserSummaryDTO>.ErrorResponse(message);
+            }
+
             IdentityUser user = await _userManager.FindByIdAsync(userId);
 
             if (user != null)
@@ -60,6 +73,7 @@ namespace GoodsStorage.BAL.Services.Implementations
 
                     var updatedSummary = new UserSummaryDTO()
                     {
+                        UserId=user.Id,
                         UserName = user.UserName,
                         UserEmail = user.Email,
                         PhoneNumber = user.PhoneNumber

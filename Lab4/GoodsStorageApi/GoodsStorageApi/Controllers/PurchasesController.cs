@@ -20,6 +20,7 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAll([FromQuery] string userId = null, [FromQuery] int pageSize = 5, [FromQuery] int pageNumber = 1)
         {
             var purchases = await _purchaseService.GetAllAsync(pageNumber, pageSize, userId);
@@ -38,6 +39,7 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpGet("{id:guid}")]
+        [Authorize]
         public async Task<IActionResult> GetById(Guid id)
         {
             var purchase = await _purchaseService.GetByIdAsync(id);
@@ -46,6 +48,7 @@ namespace GoodsStorage.API.Controllers
 
                 var result = await _authorizationService.AuthorizeAsync(User, purchase.Data, "CanAccessPurchasePolicy");
                 if (!result.Succeeded) return new ForbidResult();
+
                 return Ok(purchase.Data);
             }
 
@@ -53,15 +56,14 @@ namespace GoodsStorage.API.Controllers
         }
 
         [HttpPost]
-        [Authorize("Staff")]
-        public async Task<IActionResult> Create([FromBody] PurchaseDTO model)
+        [Authorize(Roles ="Staff")]
+        public async Task<IActionResult> Create([FromBody] CreatePurchaseDTO model)
         {
             var purchase = await _purchaseService.AddAsync(model);
 
-            if (purchase.Status == Status.Ok) return CreatedAtAction(nameof(GetById), new { id = purchase.Data }, model);
+            if (purchase.Status == Status.Ok) return CreatedAtAction(nameof(GetById), new { id = purchase.Data }, (await _purchaseService.GetByIdAsync(purchase.Data)).Data);
 
             return BadRequest(purchase.Description);
         }
     }
-
 }

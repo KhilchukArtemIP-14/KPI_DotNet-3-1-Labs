@@ -28,7 +28,9 @@ namespace GoodsStorage.BAL.Services.Implementations
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Email, user.Email)
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim("userId", user.Id)
+
             };
             foreach(var role in roles)
             {

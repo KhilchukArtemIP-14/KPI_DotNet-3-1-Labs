@@ -12,6 +12,6 @@ namespace GoodsStorage.BAL.Services.Interfaces
     public interface IUserSummaryService
     {
         public Task<BaseResponse<UserSummaryDTO>> GetUserSummaryById(string userId);
-        public Task<BaseResponse<UserSummaryDTO>> UpdateUserSummaryById(UserSummaryDTO updatedUserSummary, string userId);
+        public Task<BaseResponse<UserSummaryDTO>> UpdateUserSummaryById(UpdateUserSummaryDTO updatedUserSummary, string userId);
     }
 }

@@ -18,13 +18,14 @@ namespace GoodsStorage.API.Authorization
             CanAccessUserSummaryRequirement requirement,
             string requestedUserId)
         {
-            var appUser = await _userManager.GetUserAsync(context.User);
-            if (appUser == null)
+            var userIdClaim = context.User.FindFirst("userId");
+            if (userIdClaim != null && requestedUserId == userIdClaim.Value)
             {
+                context.Succeed(requirement);
                 return;
             }
 
-            if (requestedUserId == appUser.Id || context.User.IsInRole("Staff"))
+            if (context.User.IsInRole("Staff"))
             {
                 context.Succeed(requirement);
             }

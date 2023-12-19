@@ -17,10 +17,10 @@ namespace GoodsStorage.API.Controllers
             _userSummaryService = userSummaryService;
             _authorizationService = authorizationService;
         }
-        [HttpGet("id")]
+        [HttpGet("{id}")]
         public async Task<IActionResult> GetUserSummaryById(string id)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, id, "CanAccessRequestPolicy");
+            var authResult = await _authorizationService.AuthorizeAsync(User, id, "CanAccessUserSummaryPolicy");
             if (!authResult.Succeeded) return new ForbidResult();
 
             var result = await _userSummaryService.GetUserSummaryById(id);
@@ -30,10 +30,10 @@ namespace GoodsStorage.API.Controllers
             return NotFound(result.Description);
         }
 
-        [HttpPut("id")]
-        public async Task<IActionResult> UpdateUserSummaryById(string id, [FromBody] UserSummaryDTO dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUserSummaryById(string id, [FromBody] UpdateUserSummaryDTO dto)
         {
-            var authResult = await _authorizationService.AuthorizeAsync(User, id, "CanAccessRequestPolicy");
+            var authResult = await _authorizationService.AuthorizeAsync(User, id, "CanAccessUserSummaryPolicy");
             if (!authResult.Succeeded) return new ForbidResult();
 
             var result = await _userSummaryService.UpdateUserSummaryById(dto,id);

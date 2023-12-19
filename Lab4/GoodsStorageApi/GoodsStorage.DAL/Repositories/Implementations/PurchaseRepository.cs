@@ -21,16 +21,18 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             _dbContext = dbContext;
         }
 
-        public async Task<Guid> AddAsync(PurchaseDTO dto)
+        public async Task<Guid> AddAsync(CreatePurchaseDTO dto)
         {
+            var tempId = Guid.NewGuid();
             var purchase = new Purchase()
             {
-                Id = Guid.NewGuid(),
+                Id = tempId,
                 UserId = dto.UserId,
                 StaffRepId = dto.StaffRepId,
                 Date = dto.Date,
                 PurchaseGoods = dto.PurchaseGoodDTOs.Select(purchaseGoodDTO => new PurchaseGood
                 {
+                    PurchaseId= tempId,
                     GoodId = purchaseGoodDTO.GoodId,
                     Amount = purchaseGoodDTO.Amount
                 }).ToList()
@@ -42,7 +44,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             return purchase.Id;
         }
 
-        public async Task<IEnumerable<PurchaseDTO>> GetAllAsync(int? pageNumber = 1, int? pageSize = 5, string? userId = null)
+        public async Task<IEnumerable<PurchaseDTO>> GetAllAsync(int pageNumber = 1, int pageSize = 5, string userId = null)
         {
             var query = _dbContext.Purchases.AsQueryable();
 
@@ -52,19 +54,22 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             }
 
             var purchases = await query
-                .Skip(((pageNumber ?? 1) - 1) * (pageSize ?? 5))
-                .Take(pageSize ?? 5)
+                .Include(p => p.PurchaseGoods)
+                .ThenInclude(pg => pg.Good)
+                .Skip((pageNumber  - 1) * (pageSize))
+                .Take(pageSize)
                 .ToListAsync();
 
             return purchases.Select(purchase => new PurchaseDTO()
             {
+                Id = purchase.Id,
                 UserId = purchase.UserId,
                 StaffRepId = purchase.StaffRepId,
                 Date = purchase.Date,
                 PurchaseGoodDTOs = purchase.PurchaseGoods.Select(purchaseGood => new PurchaseGoodDTO
                 {
                     GoodId = purchaseGood.GoodId,
-                    PurchaseId = purchaseGood.PurchaseId,
+                    GoodName = purchaseGood.Good.Name,
                     Amount = purchaseGood.Amount
                 })
             });
@@ -73,6 +78,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
         public async Task<PurchaseDTO> GetByIdAsync(Guid id)
         {
             var purchase = await _dbContext.Purchases.Include(p => p.PurchaseGoods)
+                                                     .ThenInclude(pg=>pg.Good)
                                                      .FirstOrDefaultAsync(p => p.Id == id);
 
             if (purchase == null)
@@ -82,13 +88,14 @@ namespace GoodsStorage.DAL.Repositories.Implementations
 
             var purchaseDTO = new PurchaseDTO()
             {
+                Id = purchase.Id,
                 UserId = purchase.UserId,
                 StaffRepId = purchase.StaffRepId,
                 Date = purchase.Date,
                 PurchaseGoodDTOs = purchase.PurchaseGoods.Select(purchaseGood => new PurchaseGoodDTO
                 {
                     GoodId = purchaseGood.GoodId,
-                    PurchaseId = purchaseGood.PurchaseId,
+                    GoodName = purchaseGood.Good.Name,
                     Amount = purchaseGood.Amount
                 })
             };
@@ -96,5 +103,4 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             return purchaseDTO;
         }
     }
-
 }

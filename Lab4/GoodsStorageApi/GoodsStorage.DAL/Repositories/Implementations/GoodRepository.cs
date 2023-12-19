@@ -18,7 +18,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
         {
             _dbContext = dbContext;
         }
-        public async Task<Guid> AddAsync(GoodDTO dto)
+        public async Task<Guid> AddAsync(ModifyGoodDTO dto)
         {
 
             Good good = new Good()
@@ -49,6 +49,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
 
                 var goodDto = new GoodDTO()
                 {
+                    Id=existingGood.Id,
                     Name = existingGood.Name,
                     Description = existingGood.Description,
                     Unit = existingGood.Unit,
@@ -68,6 +69,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
                 .Skip((pageNumber - 1) * pageSize)
                 .Take(pageSize)
                 .Select(good => new GoodDTO(){
+                    Id = good.Id,
                     Name = good.Name,
                     Description = good.Description,
                     Unit = good.Unit,
@@ -83,6 +85,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
 
             var goodDto = new GoodDTO()
             {
+                Id = good.Id,
                 Name = good.Name,
                 Description = good.Description,
                 Unit = good.Unit,
@@ -92,26 +95,24 @@ namespace GoodsStorage.DAL.Repositories.Implementations
             return goodDto;
         }
 
-        public async Task<GoodDTO> UpdateAsync(Guid id, GoodDTO dto)
+        public async Task<GoodDTO> UpdateAsync(Guid id, ModifyGoodDTO dto)
         {
             var existingGood = await _dbContext.Goods.Where(g => !g.IsDeleted).FirstOrDefaultAsync(x => x.Id == id);
 
             if (existingGood != null)
             {
-                // Update properties with values from the DTO
                 existingGood.Name = dto.Name;
                 existingGood.Description = dto.Description;
                 existingGood.Unit = dto.Unit;
                 existingGood.Price = dto.Price;
                 existingGood.AvailableAmount = dto.AvailableAmount;
 
-                // Update the entity in the database
                 _dbContext.Goods.Update(existingGood);
                 await _dbContext.SaveChangesAsync();
 
-                // Return the updated DTO
                 var updatedDto = new GoodDTO()
                 {
+                    Id = existingGood.Id,
                     Name = existingGood.Name,
                     Description = existingGood.Description,
                     Unit = existingGood.Unit,
