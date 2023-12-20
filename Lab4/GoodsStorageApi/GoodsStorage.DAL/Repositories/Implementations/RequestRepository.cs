@@ -56,6 +56,7 @@ namespace GoodsStorage.DAL.Repositories.Implementations
 
                 var requestDTO = new RequestDTO()
                 {
+                    Id = existingRequest.Id,
                     GoodId = existingRequest.GoodId,
                     GoodName=existingRequest.Good.Name,
                     CustomerId=existingRequest.CustomerId,
